@@ -48,6 +48,7 @@ def payment(price):
     "customerName": "Suhas",
     "customerEmail": "suhas@g.cashfree.com",
     "notifyUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
+    "returnUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
     "customerPhone": "9999999991"
 }
 
@@ -98,8 +99,10 @@ def status():
     data = request.get_json() or request.form.to_dict()
     order_id = data.get("data", {}).get("order", {}).get("order_id")
     response = checkstatus(order_id)
-    print(response['orderStatus'])
-    return jsonify(response)
+    print(response)
+    if response['orderStatus'] == "PAID":
+        return redirect("https://ticketboking.netlify.app?status=paid")
+    return redirect("https://ticketboking.netlify.app?status=notpaid")
 
 
   
