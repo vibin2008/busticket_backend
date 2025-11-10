@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify
+from flask import Flask,request,jsonify,redirect
 import mysql.connector as mysql
 from flask_cors import CORS
 import requests
@@ -9,6 +9,7 @@ import os
 
 con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd="HZS5YNagP3",database="sql7806840")
 cur = con.cursor()
+
 
 def data(a):
     stop = []
@@ -32,11 +33,11 @@ def payment(price):
     SECRET_KEY = os.getenv('secret')
     print(APP_ID,SECRET_KEY)
     # APP_ID,SECRET_KEY = id()
-    global order_id
-    order_id = f"bus_ticket_{uuid.uuid4().hex[:8]}"
+    
 
     url = "https://test.cashfree.com/api/v1/order/create"
 
+    order_id = f"bus_ticket_{uuid.uuid4().hex[:8]}"
 
     payload = {
     "appId": APP_ID,
@@ -92,11 +93,13 @@ def pay():
     payment_link = response.get("paymentLink")
     return jsonify({"url":payment_link})
 
-@app.route('/status',methods=['POST'])
+@app.route('/status',methods=['POST','GET'])
 def status():
+    data = request.get_json() or request.form.to_dict()
+    order_id = data.get("data", {}).get("order", {}).get("order_id")
     response = checkstatus(order_id)
-    if response.get("txStatus") == 'SUCCESS':
-        print("success")
+    print(response['orderStatus'])
+    return jsonify(response)
 
 
   
