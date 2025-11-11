@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <link rel="stylesheet" href="ticket.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='ticket.css') }}">
         <h1>Have a Safe and Happy Journey!</h1>
         <hr>
         <center>
@@ -28,7 +28,7 @@
                 <h2>Payment Unsuccessfull!</h2>
             </div>
         </center>
-        <script src = "ticket.js"></script>
+        <script src = "{{ url_for('static', filename='ticket.js') }}"></script>
         
     </body>
 </html>

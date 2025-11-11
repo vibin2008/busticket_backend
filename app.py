@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify,redirect,render_template
+from flask import Flask,request,jsonify,redirect,render_template,url_for
 import mysql.connector as mysql
 from flask_cors import CORS
 import requests
@@ -9,6 +9,8 @@ import os
 
 con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd="HZS5YNagP3",database="sql7806840")
 cur = con.cursor()
+
+dic={}
 
 
 def data(a):
@@ -47,6 +49,7 @@ def payment(price):
     "orderCurrency": "INR",
     "customerName": "Suhas",
     "customerEmail": "suhas@g.cashfree.com",
+    "returnUrl":"https://ayla-ropier-consuela.ngrok-free.dev/tick",
     "notifyUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
     "customerPhone": "9999999991"
 }
@@ -58,7 +61,7 @@ def payment(price):
 def checkstatus(order_id):
     global APP_ID
     global SECRET_KEY
-    load_dotenv('.ev')
+    load_dotenv('.env')
     APP_ID = os.getenv('api')
     SECRET_KEY = os.getenv('secret')
     
@@ -91,15 +94,19 @@ def pay():
     payment_link = response.get("paymentLink")
     return jsonify({"url":payment_link})
 
+@app.route('/tick',methods=['POST'])
+def tick():
+    return render_template("index.html",txStatus=dic['status'])
+
 @app.route('/status',methods=['POST','GET'])
 def status():
-    data = request.get_json() or request.form.to_dict()
+    data = request.get_json()
     order_id = data.get("data", {}).get("order", {}).get("order_id")
     response = checkstatus(order_id)
-    print(response)
-    if response['orderStatus'] == "PAID":
-        return render_template("index.html",status=paid)
-    return render_template("https://ticketboking.netlify.app?status=notpaid")
+    status = response['txStatus']
+    time = response['txTime']
+    dic["status"] = status
+    dic["time"] = time
 
 
   

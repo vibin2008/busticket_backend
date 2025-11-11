@@ -1,7 +1,8 @@
 window.onload = function(){
     const params = new URLSearchParams(window.location.search)
+    console.log(params)
     const status = params.get('txStatus')
-    var tic = document.getElementById("ticket")
+    var tic = document.getElementById("front")
     var unsuccess = document.getElementById("unsuccessful")
     if (status == "SUCCESS"){
         tic.style.display = "inline-block"
@@ -23,7 +24,3 @@ function open(){
                 div.append(a)
                 
             }
-
-function data(){
-
-}
