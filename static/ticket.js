@@ -1,7 +1,6 @@
 window.onload = function(){
-    const params = new URLSearchParams(window.location.search)
-    console.log(params)
-    const status = params.get('txStatus')
+    var status = this.document.getElementById("suc")
+    console.log(status.value)
     var tic = document.getElementById("front")
     var unsuccess = document.getElementById("unsuccessful")
     if (status == "SUCCESS"){

@@ -12,11 +12,28 @@
         <hr>
         <center>
             <div id = "front">
-                <h2 style="color:gold">YOUR TICKET</h2>
-                <h3 style="color: greenyellow;" id="date">date</h3>
-                <h3>From</h3>
-                <h3>To</h3>
-                <h2 id="price">Price</h2>
+                <input type="text" value={{txStatus}} style="display:none;" id="suc">
+                <h2 style="color:gold">Your Ticket</h2>
+                <table>
+                    <tr>
+                        <td><h4>Date:</h4></td>
+                        <td><h3 style="color: greenyellow;">{{txTime}}</h3></td>
+                    </tr>
+                    <tr>
+                        <tr>
+                            <td><h4>From:</h4></td>
+                            <td><h3>{{frm}}</h3></td>
+                        </tr>
+                    </tr>
+                    <tr>
+                        <td><h4>To:</h4></td>
+                        <td><h3>{{to}}</h3></td>
+                    </tr>
+                    <tr>
+                        <td><h4>Price:</h4></td>
+                        <td><h3>{{price}}</h3></td>
+                    </tr>
+                </table>
                 <center>
                     <button onclick="open()">Share</button>
                 </center>
