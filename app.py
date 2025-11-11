@@ -6,6 +6,7 @@ import uuid
 from urllib.parse import quote
 from dotenv import load_dotenv
 import os
+import time
 
 
 con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd="HZS5YNagP3",database="sql7806840")
@@ -84,14 +85,15 @@ def checkstatus(order_id):
 app = Flask(__name__)
 app.secret_key = 'vibin'
 CORS(app)
+dic={}
+
 @app.route('/stop',methods=['POST'])       
 def hello(): 
+    dic.clear()
     req = request.get_json()
     table_name = req.get("table")
     stop,dis = data(table_name)
     return jsonify({"distance":dis,"stops":stop})
-
-dic={}
 
 @app.route('/pay',methods=['POST'])
 def pay():
@@ -99,17 +101,26 @@ def pay():
     price = req.get("price")
     frm = req.get("from")
     to = req.get("to")
-    print(frm," ",to)
     response = payment(price,frm,to)
     payment_link = response.get("paymentLink")
     return jsonify({"url":payment_link})
 
 @app.route('/tick', methods=['GET', 'POST'])
 def tick():
-    f = request.args.get("from")
-    t = request.args.get("to")
-    p = request.args.get("price")
-    return render_template("index.html", txStatus=dic['txStatus'],frm=f,to=t,txTime=dic['txTime'],price=p)
+    if not request.args.get("txStatus"):
+        url = request.url
+        if "txStatus" not in dic:
+            return redirect(f"{url}&txStatus=failed&txTime=none")
+        else:
+            return redirect(f"{url}&txStatus={dic['txStatus']}&txTime={dic['txTime']}")
+        
+    else:
+        f = request.args.get("from")
+        t = request.args.get("to")
+        p = request.args.get("price")
+        s = request.args.get("txStatus")
+        ti = request.args.get("txTime")
+        return render_template("index.html", txStatus=s,frm=f,to=t,txTime=ti,price=p)
 
 
 @app.route('/status',methods=['GET','POST'])
@@ -120,9 +131,14 @@ def status():
                    data.get("order_id"))
     response = checkstatus(order_id)
     print(response)
-    dic['txStatus'] = response['txStatus']
-    dic['txTime'] = response['txTime']
-    return "done"
+    if response and "txStatus" in response:
+        dic["txStatus"] = response["txStatus"]
+        dic["txTime"] = response.get("txTime", None)
+        return jsonify({"message": "Status updated", "data": dic})
+    else:
+        dic["txStatus"] = "failed"
+        dic["txTime"] = None
+        return jsonify({"message": "Status updated", "data": dic})
 
 
   

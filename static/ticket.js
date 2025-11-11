@@ -1,15 +1,11 @@
 window.onload = function(){
-    var status = this.document.getElementById("suc")
-    console.log(status.value)
+    const params = new URLSearchParams(window.location.search)
+    const status = params.get("txStatus")
     var tic = document.getElementById("front")
     var unsuccess = document.getElementById("unsuccessful")
     if (status == "SUCCESS"){
         tic.style.display = "inline-block"
         unsuccess.style.display = "none"
-        const price = params.get("orderAmount")
-        const data = params.get("txTime")
-        console.log(price)
-        console.log(data)
     }
     else{
         tic.style.display = "none"
@@ -17,9 +13,8 @@ window.onload = function(){
     }
 }
 
-function open(){
-                var a = document.createElement("a")
-                a.href = "https://wa.me/?text=https://example.com/ticket/12345"
-                div.append(a)
-                
+function open_wa(){
+                var url = window.location.href
+                const message = encodeURIComponent("Here is your ticket: " + url)
+                window.location.href = "https://wa.me/?text=Here is your ticket"+message                
             }
