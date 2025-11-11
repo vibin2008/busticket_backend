@@ -1,0 +1,39 @@
+body{
+    text-align: center;
+    background-color: black;
+    color: white;
+}
+
+#front{
+    background-color: grey;
+    z-index: 1;
+    position: absolute;
+    border-radius: 5%;
+    left: 30%;
+    padding: 50px;
+    display: inline-block;
+    text-align: left;
+    border: 2px solid white;
+    margin-top: 10%;
+}
+
+#unsuccessful{
+    background-color: white;
+    position: absolute;
+    border-radius: 5%;
+    z-index: 0;
+    left: 30%;
+    padding-block-end: 50px;
+    display: none;
+    color:red;
+    border: 2px solid red;
+    margin-top: 10%;
+    padding: 50px;
+}
+
+button{
+    padding: 10px;
+    background-color: lightgreen;
+    border: 3px solid white;
+    border-radius: 20%;
+}

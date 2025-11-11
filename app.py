@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify,redirect
+from flask import Flask,request,jsonify,redirect,render_template
 import mysql.connector as mysql
 from flask_cors import CORS
 import requests
@@ -48,7 +48,6 @@ def payment(price):
     "customerName": "Suhas",
     "customerEmail": "suhas@g.cashfree.com",
     "notifyUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
-    "returnUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
     "customerPhone": "9999999991"
 }
 
@@ -59,11 +58,9 @@ def payment(price):
 def checkstatus(order_id):
     global APP_ID
     global SECRET_KEY
-    # Ensure env vars are loaded
-    if not APP_ID or not SECRET_KEY:
-        load_dotenv('.ev')
-        APP_ID = os.getenv('api')
-        SECRET_KEY = os.getenv('secret')
+    load_dotenv('.ev')
+    APP_ID = os.getenv('api')
+    SECRET_KEY = os.getenv('secret')
     
     url = "https://test.cashfree.com/api/v1/order/info/status"
 
@@ -101,8 +98,8 @@ def status():
     response = checkstatus(order_id)
     print(response)
     if response['orderStatus'] == "PAID":
-        return redirect("https://ticketboking.netlify.app?status=paid")
-    return redirect("https://ticketboking.netlify.app?status=notpaid")
+        return render_template("index.html",status=paid)
+    return render_template("https://ticketboking.netlify.app?status=notpaid")
 
 
   
