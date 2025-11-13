@@ -19,7 +19,7 @@ r = redis.Redis(
 )
 
 
-con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd=sql_pass,database="sql7806840")
+con = mysql.connect(host="vibin2008.mysql.pythonanywhere-services.com",user="vibin2008",passwd=sql_pass,database="vibin2008$bus")
 cur = con.cursor()
 
 
