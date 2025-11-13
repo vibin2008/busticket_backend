@@ -49,7 +49,7 @@ def payment(price,frm,to):
     encoded_price = quote(str(price))
     order_id = f"bus_ticket_{uuid.uuid4().hex[:8]}"
 
-    return_url = f"https://ayla-ropier-consuela.ngrok-free.dev/tick?order_id={order_id}&from={encoded_from}&to={encoded_to}&price={encoded_price}"
+    return_url = f"https://web-production-5dd66.up.railway.app/tick?order_id={order_id}&from={encoded_from}&to={encoded_to}&price={encoded_price}"
 
     
 
@@ -66,7 +66,7 @@ def payment(price,frm,to):
     "customerName": "Suhas",
     "customerEmail": "suhas@g.cashfree.com",
     "returnUrl": return_url,
-    "notifyUrl": "https://ayla-ropier-consuela.ngrok-free.dev/status",
+    "notifyUrl": "https://web-production-5dd66.up.railway.app/status",
     "customerPhone": "9999999991"
 }
 
