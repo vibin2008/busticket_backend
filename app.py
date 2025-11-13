@@ -6,10 +6,20 @@ import uuid
 from urllib.parse import quote
 from dotenv import load_dotenv
 import os
-import time
+import redis
+load_dotenv('.env')
+redis_pass = os.getenv('redis')
+sql_pass = os.getenv('sql')
+r = redis.Redis(
+    host='redis-10507.crce206.ap-south-1-1.ec2.cloud.redislabs.com',
+    port=10507,
+    username='default',
+    password=redis_pass,
+    decode_responses=True
+)
 
 
-con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd="HZS5YNagP3",database="sql7806840")
+con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd=sql_pass,database="sql7806840")
 cur = con.cursor()
 
 
@@ -37,14 +47,15 @@ def payment(price,frm,to):
     encoded_from = quote(frm)
     encoded_to = quote(to)
     encoded_price = quote(str(price))
+    order_id = f"bus_ticket_{uuid.uuid4().hex[:8]}"
 
-    return_url = f"https://ayla-ropier-consuela.ngrok-free.dev/tick?from={encoded_from}&to={encoded_to}&price={encoded_price}"
+    return_url = f"https://ayla-ropier-consuela.ngrok-free.dev/tick?order_id={order_id}&from={encoded_from}&to={encoded_to}&price={encoded_price}"
 
     
 
     url = "https://test.cashfree.com/api/v1/order/create"
 
-    order_id = f"bus_ticket_{uuid.uuid4().hex[:8]}"
+    
 
     payload = {
     "appId": APP_ID,
@@ -85,11 +96,10 @@ def checkstatus(order_id):
 app = Flask(__name__)
 app.secret_key = 'vibin'
 CORS(app)
-dic={}
+
 
 @app.route('/stop',methods=['POST'])       
 def hello(): 
-    dic.clear()
     req = request.get_json()
     table_name = req.get("table")
     stop,dis = data(table_name)
@@ -109,10 +119,11 @@ def pay():
 def tick():
     if not request.args.get("txStatus"):
         url = request.url
-        if "txStatus" not in dic:
-            return redirect(f"{url}&txStatus=failed&txTime=none")
-        else:
-            return redirect(f"{url}&txStatus={dic['txStatus']}&txTime={dic['txTime']}")
+        order_id = request.args.get("order_id")
+        order_data = r.hgetall(order_id)
+        tx_status = order_data.get('txStatus',"failed")
+        tx_time = order_data.get('txTime',None)
+        return redirect(f"{url}&txStatus={tx_status}&txTime={tx_time}")
         
     else:
         f = request.args.get("from")
@@ -130,15 +141,12 @@ def status():
                    data.get("orderId") or 
                    data.get("order_id"))
     response = checkstatus(order_id)
-    print(response)
-    if response and "txStatus" in response:
-        dic["txStatus"] = response["txStatus"]
-        dic["txTime"] = response.get("txTime", None)
-        return jsonify({"message": "Status updated", "data": dic})
-    else:
-        dic["txStatus"] = "failed"
-        dic["txTime"] = None
-        return jsonify({"message": "Status updated", "data": dic})
+    txs = response.get('txStatus',"failed")
+    txt = response.get('txTime',None)
+    r.hset(order_id, mapping={"txStatus":txs,"txTime":txt})
+    r.expire(order_id, 600)
+    return jsonify({"message":"all done"})
+
 
 
   
