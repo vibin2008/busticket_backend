@@ -7,6 +7,7 @@ from urllib.parse import quote
 from dotenv import load_dotenv
 import os
 import redis
+import time
 load_dotenv('.env')
 redis_pass = os.getenv('redis')
 sql_pass = os.getenv('sql')
@@ -115,6 +116,7 @@ def pay():
 
 @app.route('/tick', methods=['GET', 'POST'])
 def tick():
+    time.sleep(2)
     if not request.args.get("txStatus"):
         url = request.url
         order_id = request.args.get("order_id")
