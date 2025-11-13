@@ -139,6 +139,7 @@ def status():
                    data.get("orderId") or 
                    data.get("order_id"))
     response = checkstatus(order_id)
+    print(response)
     txs = response.get('txStatus',"failed")
     txt = response.get('txTime',None)
     r.hset(order_id, mapping={"txStatus":txs,"txTime":txt})
