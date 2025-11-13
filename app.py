@@ -19,13 +19,11 @@ r = redis.Redis(
 )
 
 
-con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd=sql_pass,database="sql7806840")
-cur = con.cursor()
-
-
 def data(a):
     stop = []
     dis = []
+    con = mysql.connect(host="sql7.freesqldatabase.com",user="sql7806840",passwd=sql_pass,database="sql7806840")
+    cur = con.cursor()
     query = f"select * from {a}"
     cur.execute(query)
     try:
